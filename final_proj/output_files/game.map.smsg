@@ -1,0 +1,2 @@
+Warning (10268): Verilog HDL information at breakout_game.v(393): always construct contains both blocking and non-blocking assignments
+Warning (10268): Verilog HDL information at keyboard_inner_driver.v(47): always construct contains both blocking and non-blocking assignments

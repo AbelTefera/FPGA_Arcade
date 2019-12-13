@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<LOG_ROOT>
+	<PROJECT NAME="game">
+		<CBX_INST_ENTRY INSTANCE_NAME="|game|breakout_game:game1|lpm_add_sub:Add5" CBX_FILE_NAME="add_sub_3ri.tdf"/>
+		<CBX_INST_ENTRY INSTANCE_NAME="|game|breakout_game:game1|lpm_add_sub:Add7" CBX_FILE_NAME="add_sub_rpi.tdf"/>
+		<CBX_INST_ENTRY INSTANCE_NAME="|game|pong_game:game2|lpm_add_sub:Add7" CBX_FILE_NAME="add_sub_3ri.tdf"/>
+		<CBX_INST_ENTRY INSTANCE_NAME="|game|pong_game:game2|lpm_add_sub:Add9" CBX_FILE_NAME="add_sub_rpi.tdf"/>
+	</PROJECT>
+</LOG_ROOT>

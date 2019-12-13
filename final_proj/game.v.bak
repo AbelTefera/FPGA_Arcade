@@ -1,0 +1,139 @@
+module game(
+  input wire CLK,             // board clock: 100 MHz on Arty/Basys3/Nexys
+    input wire RST_BTN,         // reset button
+    output wire VGA_HS_O,       // horizontal sync output
+    output wire VGA_VS_O,// vertical sync output
+    output reg [3:0] VGA_R,    // 4-bit VGA red output
+    output reg [3:0] VGA_G,    // 4-bit VGA green output
+    output reg [3:0] VGA_B,    // 4-bit VGA blue output
+	 input KEY0,
+	 input KEY1,
+	 input KEY2,
+	 input KEY3
+    );
+
+    wire rst = ~RST_BTN;    // reset is active low on Arty & Nexys Video
+    // wire rst = RST_BTN;  // reset is active high on Basys3 (BTNC)
+
+    // generate a 25 MHz pixel strobe
+    reg [15:0] cnt;
+    reg pix_stb;
+    always @(posedge CLK)
+        {pix_stb, cnt} <= cnt + 16'h8000;  // divide by 4: (2^16)/4 = 0x4000
+
+    wire [9:0] x;  // current pixel x position: 10-bit value: 0-1023
+    wire [8:0] y;  // current pixel y position:  9-bit value: 0-511
+
+    vga640x480 display (
+        .i_clk(CLK),
+        .i_pix_stb(pix_stb),
+        .i_rst(rst),
+        .o_hs(VGA_HS_O), 
+        .o_vs(VGA_VS_O), 
+        .o_x(x), 
+        .o_y(y)
+    );
+	 
+	 wire [17:0] block;
+	 wire player_bar;
+	 reg breakout_start;
+	 wire breakout_done;
+	 wire [4:0] breakout_ball;
+	 breakout_game game1(CLK, RST_BTN, x, y, block, player_bar, breakout_ball, KEY1, KEY0, breakout_start, breakout_done);
+
+    wire sq_a, sq_b, sq_c, sq_d;
+    assign sq_a = ((x > 120) & (y >  40) & (x < 280) & (y < 200)) ? 1 : 0;
+    assign sq_b = ((x > 200) & (y > 120) & (x < 360) & (y < 280)) ? 1 : 0;
+    assign sq_c = ((x > 280) & (y > 200) & (x < 440) & (y < 360)) ? 1 : 0;
+    assign sq_d = ((x > 360) & (y > 280) & (x < 520) & (y < 440)) ? 1 : 0;
+ 
+	parameter menu = 2'd0;
+	parameter breakout = 2'd1;
+	parameter pong = 2'd2;
+	
+	reg [2:0] s;
+	reg [2:0] ns;
+	
+	always@(posedge CLK or negedge RST_BTN)
+	begin
+		if(RST_BTN == 1'b0)
+		begin
+			s <= menu;
+		end
+		else 
+		begin
+			s <= ns;
+		end
+	end
+
+ // state transition
+ always@(*)
+ begin
+	case(s)
+		menu: begin
+					if (KEY0 == 1'b0)
+					begin
+						ns = breakout;
+					end
+					else
+					begin
+						ns = menu;
+					end
+				end
+				
+		breakout: begin
+						if (breakout_done == 1'b0)
+						begin
+							ns = breakout;
+							breakout_start = 1'b1;
+						end
+						else 
+						begin
+							ns = menu;
+						end
+					 end
+	endcase
+ end
+ 
+ // vga output assignment
+ always@(*) 
+	begin 
+		case(s)
+			menu: begin
+						VGA_R[3] = sq_a;         // square b is red
+						VGA_G[3] = sq_b | sq_c;  // squares a and d are green
+						VGA_B[3] = sq_d;  
+						
+						VGA_R[2] = sq_a;         // square b is red
+						VGA_G[2] = sq_b | sq_c;  // squares a and d are green
+						VGA_B[2] = sq_d;  
+						
+						VGA_R[1] = sq_a;         // square b is red
+						VGA_G[1] = sq_b | sq_c;  // squares a and d are green
+						VGA_B[1] = sq_d;  
+						
+						VGA_R[0] = sq_a;         // square b is red
+						VGA_G[0] = sq_b | sq_c;  // squares a and d are green
+						VGA_B[0] = sq_d;  
+					end
+				
+			breakout: begin
+							VGA_R[3] = breakout_ball[0] | breakout_ball[1] | breakout_ball[2] | breakout_ball[3] | breakout_ball[4] | player_bar | block[0] | block[6] | block[12] | block[1] | block[7] | block[13] | block[5] | block[11] | block[17];        
+							VGA_G[3] = breakout_ball[0] | breakout_ball[1] | breakout_ball[2] | breakout_ball[3] | breakout_ball[4] | player_bar | block[3] | block[9] | block[15] | block[1] | block[7] | block[13] | block[2] | block[8] | block[14]; 
+							VGA_B[3] = breakout_ball[0] | breakout_ball[1] | breakout_ball[2] | breakout_ball[3] | breakout_ball[4] | player_bar | block[4] | block[10] | block[16] | block[2] | block[8] | block[14] | block[5] | block[11] | block[17]; 
+							
+							VGA_R[2] = breakout_ball[0] | breakout_ball[1] | breakout_ball[2] | breakout_ball[3] | breakout_ball[4] | player_bar | block[0] | block[6] | block[12] | block[1] | block[7] | block[13] | block[5] | block[11] | block[17];         
+							VGA_G[2] = breakout_ball[0] | breakout_ball[1] | breakout_ball[2] | breakout_ball[3] | breakout_ball[4] | player_bar | block[3] | block[9] | block[15] | block[1] | block[7] | block[13] | block[2] | block[8] | block[14];
+							VGA_B[2] = breakout_ball[0] | breakout_ball[1] | breakout_ball[2] | breakout_ball[3] | breakout_ball[4] | player_bar | block[4] | block[10] | block[16] | block[2] | block[8] | block[14] | block[5] | block[11] | block[17]; 
+							
+							VGA_R[1] = breakout_ball[0] | breakout_ball[1] | breakout_ball[2] | breakout_ball[3] | breakout_ball[4] | player_bar | block[0] | block[6] | block[12] | block[1] | block[7] | block[13] | block[5] | block[11] | block[17];         
+							VGA_G[1] = breakout_ball[0] | breakout_ball[1] | breakout_ball[2] | breakout_ball[3] | breakout_ball[4] | player_bar | block[3] | block[9] | block[15] | block[1] | block[7] | block[13] | block[2] | block[8] | block[14];  
+							VGA_B[1] = breakout_ball[0] | breakout_ball[1] | breakout_ball[2] | breakout_ball[3] | breakout_ball[4] | player_bar | block[4] | block[10] | block[16] | block[2] | block[8] | block[14] | block[5] | block[11] | block[17]; 
+							
+							VGA_R[0] = breakout_ball[0] | breakout_ball[1] | breakout_ball[2] | breakout_ball[3] | breakout_ball[4] | player_bar | block[0] | block[6] | block[12] | block[1] | block[7] | block[13] | block[5] | block[11] | block[17];         
+							VGA_G[0] = breakout_ball[0] | breakout_ball[1] | breakout_ball[2] | breakout_ball[3] | breakout_ball[4] | player_bar | block[3] | block[9] | block[15] | block[1] | block[7] | block[13] | block[2] | block[8] | block[14]; 
+							VGA_B[0] = breakout_ball[0] | breakout_ball[1] | breakout_ball[2] | breakout_ball[3] | breakout_ball[4] | player_bar | block[4] | block[10] | block[16] | block[2] | block[8] | block[14] | block[5] | block[11] | block[17]; 
+						 end
+		endcase
+	end		 
+endmodule

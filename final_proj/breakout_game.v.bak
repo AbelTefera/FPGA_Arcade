@@ -1,0 +1,149 @@
+module breakout_game(clk, rst, x, y, block, player_bar, ball, left, right, start, done);
+
+input clk;
+input rst;
+input right, left, start;
+input [9:0] x;
+input [8:0] y;
+output reg done;
+output [17:0] block;
+output [4:0] ball;
+output player_bar;
+
+reg [2:0] s;
+reg [2:0] ns;
+
+parameter start_game = 2'd0,
+				playing = 2'd1,
+				game_done = 2'd2;
+
+always@(posedge clk or negedge rst)
+begin
+		if (rst == 1'b0)
+		begin
+			s <= start_game;
+		end
+		else
+		begin
+			s <= ns;
+		end
+end
+
+// state transition
+always@(*)
+begin
+	case(s)
+		start_game: begin
+			done = 1'b0;
+			if (start == 1'b1)
+			begin	
+				ns = playing;
+			end
+			else 
+			begin
+				ns = start;
+			end
+		end
+		
+		playing: begin
+			
+		end
+		
+		game_done: begin
+			done = 1'b1;
+		end
+	endcase
+	
+	bar_height = 25;
+	bar_width = 96;
+	bar_y = 450;
+	bar_x_sp = 8;
+end
+			
+reg [9:0] bar_x;
+reg [8:0] bar_y;
+
+reg [9:0] bar_width;
+reg [8:0] bar_height;
+
+reg [7:0] bar_x_sp;
+
+reg [9:0] ball_x;
+reg [8:0] ball_y;
+
+reg [19:0] count;
+
+always@(posedge clk)
+begin
+	if (count == 20'd25_000_000)
+	begin
+		count <= 20'd0;
+	end
+	else
+	begin
+		count <= count + 20'd1;
+	end
+end
+	
+always@(posedge clk)
+begin
+	case(s)
+		start_game: begin
+			bar_x <= 272;
+			
+			ball_x <= 315;
+			ball_y <= 235;
+		end
+		
+		playing: begin
+			if (count == 20'd500_000)
+				begin
+				// x movement of player_bar
+				if (right == 1'b0)
+				begin
+					bar_x <= bar_x + bar_x_sp;
+				end
+				
+				if (left == 1'b0)
+				begin
+					bar_x <= bar_x - bar_x_sp;
+				end
+			end
+		end
+	endcase
+end
+
+assign player_bar = ((x > bar_x) & (x < bar_x + bar_width) & (y > bar_y) & (y < (bar_y + bar_height))) ? 1 : 0;
+
+assign ball[0] = ((x > ball_x) & (x < (ball_x + 10)) & (y > (ball_y + 4)) & (y < (ball_y + 6))) ? 1 : 0;
+assign ball[1] = ((x > ball_x) & (x < (ball_x + 10)) & (y > (ball_y + 4)) & (y < (ball_y + 6))) ? 1 : 0;
+assign ball[2] = ((x > ball_x) & (x < (ball_x + 10)) & (y > (ball_y + 4)) & (y < (ball_y + 6))) ? 1 : 0;
+assign ball[3] = ((x > ball_x) & (x < (ball_x + 10)) & (y > (ball_y + 4)) & (y < (ball_y + 6))) ? 1 : 0;
+assign ball[4] = ((x > ball_x) & (x < (ball_x + 10)) & (y > (ball_y + 4)) & (y < (ball_y + 6))) ? 1 : 0;
+
+
+// row 1
+assign block[0] = ((x > 0) & (x < 104) & (y > 0) & (y < 50)) ? 1 : 0;
+assign block[1] = ((x > 107) & (x < 211) & (y > 0) & (y < 50)) ? 1 : 0;
+assign block[2] = ((x > 214) & (x < 318) & (y > 0) & (y < 50)) ? 1 : 0;
+assign block[3] = ((x > 321) & (x < 425) & (y > 0) & (y < 50)) ? 1 : 0;
+assign block[4] = ((x > 428) & (x < 532) & (y > 0) & (y < 50)) ? 1 : 0;
+assign block[5] = ((x > 535) & (x < 640) & (y > 0) & (y < 50)) ? 1 : 0;
+
+// row 2
+assign block[6] = ((x > 0) & (x < 104) & (y > 55) & (y < 105)) ? 1 : 0;
+assign block[7] = ((x > 107) & (x < 211) & (y > 55) & (y < 105)) ? 1 : 0;
+assign block[8] = ((x > 214) & (x < 318) & (y > 55) & (y < 105)) ? 1 : 0;
+assign block[9] = ((x > 321) & (x < 425) & (y > 55) & (y < 105)) ? 1 : 0;
+assign block[10] = ((x > 428) & (x < 532) & (y > 55) & (y < 105)) ? 1 : 0;
+assign block[11] = ((x > 535) & (x < 640) & (y > 55) & (y < 105)) ? 1 : 0;
+
+// row 3
+assign block[12] = ((x > 0) & (x < 104) & (y > 110) & (y < 165)) ? 1 : 0;
+assign block[13] = ((x > 107) & (x < 211) & (y > 110) & (y < 165)) ? 1 : 0;
+assign block[14] = ((x > 214) & (x < 318) & (y > 110) & (y < 165)) ? 1 : 0;
+assign block[15] = ((x > 321) & (x < 425) & (y > 110) & (y < 165)) ? 1 : 0;
+assign block[16] = ((x > 428) & (x < 532) & (y > 110) & (y < 165)) ? 1 : 0;
+assign block[17] = ((x > 535) & (x < 640) & (y > 110) & (y < 165)) ? 1 : 0;
+
+endmodule
