@@ -6,7 +6,7 @@
     * [What's Pong?](./Development-Guide#whats-pong)
     * [How the VGA controller module works](./Development-Guide#how-the-vga-controller-module-works)
     * [How to *use* the VGA controller module](./Development-Guide#how-to-use-the-vga-controller-module)
-* [Menu](./Development-Guide#menu)
+* [Game](./Development-Guide#menu)
     * [General](./Development-Guide#General)
     * [What each state does](./Development-Guide#what-each-state-does)
 * [Breakout](./Development-Guide#breakout)
@@ -19,9 +19,9 @@
 * [Credits](./Development-Guide#credits)
 
 ## What is this?
-The goal of this project was to have multiple games run on an Altera DE1 board. The player would have the option to choose from a library of games. It was written on Verilog.
+The goal of this project is to have multiple games run on an Altera DE1 board. The player would have the option to choose from a library of games. It was written in Verilog.
 
-Currently two games have been implemented, Breakout and Pong. After losing or wining a games you have the option to play again or go back to the main menu.
+Currently two games have been implemented, Breakout and Pong. You pick the game you want to play from a menu screen which you can return to play other games.
 
 ### Known issues
 The player point counter in the pong game sometimes counts up by a number greater than one when the ball goes of the screen. 
@@ -47,16 +47,12 @@ The VGA controller was copied of from this site [here](https://timetoexplore.net
 The module outputs an x and y value, telling you what pixel it is currently drawing. On the cyclone II / DE1 Altera board each color on the VGA is 4 bits. If a VGA signal is high or equal to 1 then the pixel will have that color. The more VGA signals are on the brigher the pixel will be. To achieve different colors, you would have different combinations of VGA signals on and off.
 
 ## Game
+### Module Heirchy
+   
 ### What each state does
-* MENU: the menu state displays the menu screen. You can also pick different games to play in this state.
-* Breakout: the breakout state sends a start signal to the breakout module which enables it to send VGA signals to display the game. When the module sends a done signal
-
-## Menu
-### General
-* 
-
-### What each state does
-* asdf
+* MENU: the menu state displays the menu screen. You can also pick different games to play in this state. press KEY0 to play Breakout or KEY1 to play Pong.
+* Breakout: the breakout state sends a start signal to the breakout module which enables it to send VGA signals to display the game. When the module sends a done signal, the fsm in the game module switches to the menu state.
+* Pong: the pong state operates in the same manner as the breakout state.
 
 ## Breakout
 ### General
@@ -89,18 +85,17 @@ The module outputs an x and y value, telling you what pixel it is currently draw
 * asdfsfsf
 
 ## Conclusion
-Some of the problems that I found while I was debugging had to do with the if-elseif-else statement being evaluated at the same time. I was also confused about structures that are like the following snippet.
+One major herdal was getting the ball to bounce randomly in both games. At first I attempted to use a linear fead back register. But the ball would go to fast due to the range of the numbers which were generated making the game unplayable. Generating a new seed every time you would play again also became challenging. 
 
-    if (count == 4'd5)
-        count <= 4'd0;
-    else
-        count <= count + 1;
+Collision wasn't hard but rather tedious to do. 
 
-I wasn't sure whether this can potentially cause problems or not, so I ended up adding another state (yes, I should've written a test module).
+More games could be added to the Arcade. 
+
+And to the menu, game_over and win screens can also be drastically improved
 
 I was surprised to know how such a simple concept called finite state machine can create and execute a complex logic (at least to me it was complex enough).
 
 One thing that I missed so much from the programming languages I know was temporary variables. I had to use so many counters because of the "everything gets executed at once" nature, and I wished there was the idea "name scope" in Verilog HDL.
 
 ## Credits
-* VGA controller module from [Dr. John S. Loomis](http://www.johnloomis.org/vita.html) [vgalab1](http://www.johnloomis.org/digitallab/vgalab/vgalab1/vgalab1.html)
+* VGA controller module from [Will Green](https://timetoexplore.net/blog/arty-fpga-vga-verilog-01)
