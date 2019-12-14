@@ -1,4 +1,4 @@
-# Atarti Arcade on the FPGA
+# Arcade on the FPGA
 
 * [What is this?](./Development-Guide#what-is-this)
 * [Background Info](./Development-Guide#background-info)
@@ -19,7 +19,7 @@
 * [Credits](./Development-Guide#credits)
 
 ## What is this?
-The goal of this project was to have multiple games run on an Altera DE2 board. The player would have the option to choose from a library of games. It was written on Verilog.
+The goal of this project was to have multiple games run on an Altera DE1 board. The player would have the option to choose from a library of games. It was written on Verilog.
 
 Currently two games have been implemented, Breakout and Pong. After losing or wining a games you have the option to play again or go back to the main menu.
 
