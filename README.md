@@ -66,7 +66,8 @@ The module outputs an x and y value, telling you what pixel it is currently draw
    * if start is high next state is play_setup.
 * play_setup
    * starts game if KEY3 is pressed, until then all objects on the screen are frozen.
-   * initializes 
+   * initializes the positions of the ball (ball_x and ball_y) and player bar (bar_x).
+   * all blocks are turned on.
 * playing 
    * this is where all the game logic happens.
    * positions of the player bar and ball are stored in the registers as well as height, width, dir, x_sp, y_sp, etc...
