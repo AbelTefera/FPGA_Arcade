@@ -47,7 +47,7 @@ The VGA controller was copied of from this site [here](https://timetoexplore.net
 The module outputs an x and y value, telling you what pixel it is currently drawing. On the cyclone II / DE1 Altera board each color on the VGA is 4 bits. If a VGA signal is high or equal to 1 then the pixel will have that color. The more VGA signals are on the brigher the pixel will be. To achieve different colors, you would have different combinations of VGA signals on and off.
 
 ## Game
-### Module Heirchy
+### Module Hierarchy
    
 ### What each state does
 * MENU: the menu state displays the menu screen. You can also pick different games to play in this state. press KEY0 to play Breakout or KEY1 to play Pong.
@@ -56,7 +56,7 @@ The module outputs an x and y value, telling you what pixel it is currently draw
 
 ## Breakout
 ### General
-* The Breakout game is implemented as one module that has a start and done signal. If it's start signal is high it will output to the vga.
+* The Breakout game is implemented as one module that has a start and done signal. If it's start signal is high it will output to the VGA.
 * All objects in the game are outputs which are on if the x and y value output from the VGA controller are with in a certain range. 
 * The module outputs vga signals that are either sent to the vga controller depending on what state the game module is in.
 * The VGA signals in the breakout module are then controlled internally with another finite state machine in the Breakout module.
@@ -79,23 +79,28 @@ The module outputs an x and y value, telling you what pixel it is currently draw
 
 ## Pong
 ### General
-* thisthsdg
+* Pong shared many of Breakouts rules and thus we could re-use code from our Breakout module to speed up development.
+* One big difference was the score counter for the players in the game.
+* The ball also bounces at a random angle depending on the value of count value, in the exact way as the ball in the breakout module.
+* VGA works in the same way as the breakout module.
 
 ### What each state does
-* asdfsfsf
+* start_game: initializes ball speed, dir and position. Initialize the bars' coordinates. Initializes the scores to 0. If start is high it starts the game.
+
+* play_setup: Initializes ball speed, dir and position. Initialize the bars' coordinates. 
+
+* playing: the ball position is update on the clock based on the x and y speeds and direction of the ball. The x and y speed of the ball is set to a random value between 1 and 3 depending on count2. To move the player 1 bar press KEY0 or KEY1. To move the player 2 bar press KEY2 or KEY3. These too update their position on the clock. The bars and ball bounce of the right and left of the screen. First player to get 5 points wins.
+
+* game_done: press KEY0 to play again, press KEY3 to go back to menu. If player 1 wins a red square is drawn. If player 2 wins a blue square is drawn
 
 ## Conclusion
 One major herdal was getting the ball to bounce randomly in both games. At first I attempted to use a linear fead back register. But the ball would go to fast due to the range of the numbers which were generated making the game unplayable. Generating a new seed every time you would play again also became challenging. 
 
 Collision wasn't hard but rather tedious to do. 
 
-More games could be added to the Arcade. 
+More games could be added to the Arcade. The menu, game_over and win screens can also be drastically improved
 
-And to the menu, game_over and win screens can also be drastically improved
-
-I was surprised to know how such a simple concept called finite state machine can create and execute a complex logic (at least to me it was complex enough).
-
-One thing that I missed so much from the programming languages I know was temporary variables. I had to use so many counters because of the "everything gets executed at once" nature, and I wished there was the idea "name scope" in Verilog HDL.
+When designing the module it was critical for us to start from the bottom up, making sure the individual games worked first before putting them into the game module. We first tried to do almost everything at once and compile, but when we were debugging so many things were wrong it was impossible to tell what was doing what. On attempt 2 we focused first on Breaker then Pong, then we put them together with the menu screen.
 
 ## Credits
 * VGA controller module from [Will Green](https://timetoexplore.net/blog/arty-fpga-vga-verilog-01)
