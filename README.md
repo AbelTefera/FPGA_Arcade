@@ -47,8 +47,6 @@ The VGA controller was copied of from this site [here](https://timetoexplore.net
 The module outputs an x and y value, telling you what pixel it is currently drawing. On the cyclone II / DE1 Altera board each color on the VGA is 4 bits. If a VGA signal is high or equal to 1 then the pixel will have that color. The more VGA signals are on the brigher the pixel will be. To achieve different colors, you would have different combinations of VGA signals on and off.
 
 ## Game
-### Module Hierarchy
-   
 ### What each state does
 * MENU: the menu state displays the menu screen. You can also pick different games to play in this state. press KEY0 to play Breakout or KEY1 to play Pong.
 * Breakout: the breakout state sends a start signal to the breakout module which enables it to send VGA signals to display the game. When the module sends a done signal, the fsm in the game module switches to the menu state.
@@ -64,8 +62,11 @@ The module outputs an x and y value, telling you what pixel it is currently draw
 ### What each state does
 * start_game
    * initializes the positions of the ball (ball_x and ball_y) and player bar (bar_x).
-   * if start signal is high the game starts, until then it is all objects on the screen are frozen.
    * all blocks are turned on.
+   * if start is high next state is play_setup.
+* play_setup
+   * starts game if KEY3 is pressed, until then all objects on the screen are frozen.
+   * initializes 
 * playing 
    * this is where all the game logic happens.
    * positions of the player bar and ball are stored in the registers as well as height, width, dir, x_sp, y_sp, etc...
@@ -85,12 +86,10 @@ The module outputs an x and y value, telling you what pixel it is currently draw
 * VGA works in the same way as the breakout module.
 
 ### What each state does
-* start_game: initializes ball speed, dir and position. Initialize the bars' coordinates. Initializes the scores to 0. If start is high it starts the game.
-
+* start_game: initializes ball speed, dir and position. Initialize the bars' coordinates. Initializes the scores to 0. If start is high next state is play_setup.
 * play_setup: Initializes ball speed, dir and position. Initialize the bars' coordinates. 
-
-* playing: the ball position is update on the clock based on the x and y speeds and direction of the ball. The x and y speed of the ball is set to a random value between 1 and 3 depending on count2. To move the player 1 bar press KEY0 or KEY1. To move the player 2 bar press KEY2 or KEY3. These too update their position on the clock. The bars and ball bounce of the right and left of the screen. First player to get 5 points wins.
-
+If KEY3 pressed the game starts.
+* playing: the ball position is update on the clock based on the x and y speeds and direction of the ball. The x and y speed of the ball is set to a random value between 1 and 3 depending on count2. To move the player 1 bar press KEY0 or KEY1. To move the player 2 bar press KEY2 or KEY3. These too update their position on the clock. The bars and ball bounce of the right and left of the screen. First player to get 5 points wins. Collision is handled in the same way as the breakout module.
 * game_done: press KEY0 to play again, press KEY3 to go back to menu. If player 1 wins a red square is drawn. If player 2 wins a blue square is drawn
 
 ## Conclusion
