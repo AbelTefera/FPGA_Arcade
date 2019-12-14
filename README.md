@@ -1,8 +1,8 @@
-# Tetris game on an FPGA board
+# Atarti Arcade on the FPGA
 
 * [What is this?](./Development-Guide#what-is-this)
 * [Background Info](./Development-Guide#background-info)
-    * [What's Tetris?](./Development-Guide#whats-tetris)
+    * [What's Breakout?](./Development-Guide#whats-breakout)
     * [How the SRAM works](./Development-Guide#how-the-sram-works)
     * [How the VGA controller module works](./Development-Guide#how-the-vga-controller-module-works)
     * [How to *use* the VGA controller module](./Development-Guide#how-to-use-the-vga-controller-module)
@@ -13,19 +13,22 @@
 * [Credits](./Development-Guide#credits)
 
 ## What is this?
-The goal of this project was to run the game [Tetris](http://en.wikipedia.org/wiki/Tetris) on an Altera DE2 board. It was written in Verilog HDL.
+The goal of this project was to have multiple games run on an Altera DE2 board. The player would have the option to choose from a library of games. It was written on Verilog.
 
-Current feature of the game is minimal. The Tetrominoes fall, you stack them, and completed lines get erased. Nothing more. No points, no hold, no "next Tetromino."
+Currently two games have been implemented, Breakout and Pong. After losing or wining a games you have the option to play again or go back to the main menu.
 
 ### Known issues
-The Tetrominoes sometimes (but rarely) stops in mid-air. I am guessing that there is some logical error inside the `WAIT` state but the exact cause is not confirmed yet. I think it has something to do with the move signal no being reset.
+The player point counter in the pong game sometimes counts up by a number greater than one when the ball goes of the screen. 
+When a game of pong is completed, the option to replay doesn't work, this could be to an error in the finite state machine.
+When playing Breakout there is slight chance that when the ball reaches the top of the screen it takes you to the gameover screen.
 
 #### TODO
 * Continue debugging.
-* Create separate module that checks if movable.
+* Check for timing issues.
+* Check finite state machine in Pong module for replay option.
 
 ## Background Info
-### What's Tetris?
+### What's Breakout?
 Tetris is a game in which the user controls 7 types of Tetrominoes that falls down from the "sky" by moving it to the left or right, or rotating it within a field of size 10x22. The user tries to place the Tetrominoes so that one or more rows are completed. Completed rows are erased, and whatever is above that erased line falls until the bottom hits another Tetromino. If you've never played Tetris or if you're already getting bored reading, you can play Tetris [here](http://www.freetetris.org/game.php).
 
 ### How the SRAM works
