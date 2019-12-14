@@ -37,8 +37,14 @@ When playing Breakout there is slight chance that when the ball reaches the top 
 ### What's Breakout?
 Breakout is classic game in which the player controls a bar on the bottome of the screen with a fixed y position, moving it left and right. There are also multiple blocks (18 in this implementation) on the top of the screen. The goal is the 'break' all the blocks by catching a ball that bounces around, the game ends if you break all blocks or you don't catch the ball (the ball moves past the player bar).
 
+video:
+(https://www.youtube.com/watch?v=GWiqJ0Z6M-c&pbjreload=a)
+
 ### What's Pong?
 Pong is another classic game. It can be multiplayer (usually max of 2 players) or single player where you against an ai. For this project it is strictly player vs player (no ai). There are two player controlled bars on either end of the screen with a ball bouncing between the two. If a ball makes it past a player's bar then the other player gets a point. In this implementation of pong the first player to have points pass a threshold (5 points in this case) wins the game.
+
+video:
+(https://www.youtube.com/watch?v=-Tjnp3zLaAU&pbjreload=10)
 
 ### How the VGA controller module works
 The VGA controller was copied of from this site [here](https://timetoexplore.net/blog/arty-fpga-vga-verilog-01), it has detailed explanations on how the VGA works at a basic level.
